@@ -1,14 +1,156 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL") // ใช้ตัวแปรใน .env เพื่อเชื่อมต่อกับ Supabase
+}
+
+model User {
+  id             String        @id @default(uuid())
+  student_id     String        @unique
+  first_name     String
+  last_name      String
+  profile_image  String?
+  username       String        @unique
+  password       String
+  email          String        @unique
+  email_verified Boolean       @default(false)
+  role           String        @default("Student")
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+
+  class_schedules ClassSchedule[]
+  room_bookings   RoomBooking[]
+  room_rentals    RoomRental[]
+  return_rentals  RoomRental[] @relation("ReturnUser") // ความสัมพันธ์สำหรับผู้คืนใน RoomRental
+  conversations   Conversation[]
+}
+
+model Classroom {
+  id              String        @id @default(uuid())
+  classroom_name  String
+  floor           Int
+  classroom_image String?
+  description     String?
+  capacity        Int           @default(0)
+  active          Boolean       @default(true)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  class_schedules ClassSchedule[]
+  room_bookings   RoomBooking[]
+  room_rentals    RoomRental[]
+}
+
+model ClassSchedule {
+  id              String        @id @default(uuid())
+  course_code     String
+  course_name     String
+  teacher_id      String
+  classroom_id    String
+  start_time      DateTime
+  end_time        DateTime
+  day_of_week     String
+  curriculum      String
+  semester        String        @default("First")
+  year            Int
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  teacher         User          @relation(fields: [teacher_id], references: [id])
+  classroom       Classroom     @relation(fields: [classroom_id], references: [id])
+}
+
+model RoomBooking {
+  id                String       @id @default(uuid())
+  booking_date      DateTime
+  user_id           String
+  classroom_id      String
+  curriculum        String
+  reserved_date     DateTime
+  reserved_start_time DateTime
+  reserved_end_time DateTime
+  reason            String
+  status            String       @default("Pending")
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+
+  user              User         @relation(fields: [user_id], references: [id])
+  classroom         Classroom    @relation(fields: [classroom_id], references: [id])
+}
+
+model RoomRental {
+  id                String       @id @default(uuid())
+  rental_date       DateTime
+  rental_time       DateTime
+  user_id           String
+  classroom_id      String
+  curriculum        String
+  reason            String
+  return_date       DateTime?
+  return_time       DateTime?
+  return_user_id    String?
+  status            String       @default("InUse")
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+
+  user              User         @relation(fields: [user_id], references: [id])
+  return_user       User?        @relation("ReturnUser", fields: [return_user_id], references: [id])
+  classroom         Classroom    @relation(fields: [classroom_id], references: [id])
+}
+
+model Conversation {
+  id            String        @id @default(uuid())
+  user_id       String
+  topic         String
+  last_message  String?
+  status        String        @default("Active")
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+
+  user          User          @relation(fields: [user_id], references: [id])
+}
+
+enum Role {
+  Student
+  Teacher
+  Admin
+}
+
+enum DayOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
+}
+
+enum Semester {
+  First
+  Second
+  Summer
+}
+
+
+enum BookingStatus {
+  Pending
+  Approved
+  Rejected
+  Cancelled
+}
+
+enum RentalStatus {
+  InUse
+  Returned
+  Late
+}
+
+enum ConversationStatus {
+  Active
+  Archived
 }
