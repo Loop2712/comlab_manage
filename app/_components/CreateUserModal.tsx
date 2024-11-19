@@ -21,10 +21,9 @@ export default function CreateUserModal({ onClose, onSave }: CreateUserModalProp
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
     setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value,
+      ...formData
     });
   };
 
@@ -109,15 +108,6 @@ export default function CreateUserModal({ onClose, onSave }: CreateUserModalProp
               value={formData.email}
               onChange={handleChange}
               required
-            />
-          </label>
-          <label>
-            Email Verified:
-            <input
-              type="checkbox"
-              name="email_verified"
-              checked={formData.email_verified}
-              onChange={handleChange}
             />
           </label>
           <label>
