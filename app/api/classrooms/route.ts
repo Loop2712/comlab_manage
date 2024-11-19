@@ -5,8 +5,14 @@ import { prisma } from '../../../lib/prisma';
 export async function GET() {
   try {
     const classrooms = await prisma.Classroom.findMany();
+
+    // ตรวจสอบว่ามีข้อมูลหรือไม่
+    if (!classrooms || classrooms.length === 0) {
+      return NextResponse.json({ message: 'No classrooms found' }, { status: 404 });
+    }
     return NextResponse.json(classrooms);
   } catch (error) {
+    console.error('Error fetching users:', error);
     return NextResponse.json({ error: 'Failed to fetch classrooms' }, { status: 500 });
   }
 }
