@@ -5,40 +5,40 @@ generator client {
 datasource db {
   provider = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL") // ใช้ตัวแปรใน .env เพื่อเชื่อมต่อกับ Supabase
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
-  id             String        @id @default(uuid())
-  student_id     String        @unique
-  first_name     String
-  last_name      String
-  profile_image  String?
-  username       String        @unique
-  password       String
-  email          String        @unique
-  email_verified Boolean       @default(false)
-  role           String        @default("Student")
-  created_at     DateTime      @default(now())
-  updated_at     DateTime      @updatedAt
+  id              Int      @id @default(autoincrement())
+  student_id      String   @unique
+  first_name      String
+  last_name       String
+  profile_image   String?
+  username        String   @unique
+  password        String
+  email           String   @unique
+  email_verified  Boolean  @default(false)
+  role            String   @default("Student")
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
   class_schedules ClassSchedule[]
   room_bookings   RoomBooking[]
   room_rentals    RoomRental[]
-  return_rentals  RoomRental[] @relation("ReturnUser") // ความสัมพันธ์สำหรับผู้คืนใน RoomRental
+  return_rentals  RoomRental[] @relation("ReturnUser")
   conversations   Conversation[]
 }
 
 model Classroom {
-  id              String        @id @default(uuid())
+  id              Int      @id @default(autoincrement())
   classroom_name  String
   floor           Int
   classroom_image String?
   description     String?
-  capacity        Int           @default(0)
-  active          Boolean       @default(true)
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
+  capacity        Int      @default(0)
+  active          Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
   class_schedules ClassSchedule[]
   room_bookings   RoomBooking[]
@@ -46,73 +46,74 @@ model Classroom {
 }
 
 model ClassSchedule {
-  id              String        @id @default(uuid())
+  id              Int      @id @default(autoincrement())
   course_code     String
   course_name     String
-  teacher_id      String
-  classroom_id    String
+  teacher_id      Int
+  classroom_id    Int
   start_time      DateTime
   end_time        DateTime
   day_of_week     String
   curriculum      String
-  semester        String        @default("First")
+  semester        String   @default("First")
   year            Int
-  created_at      DateTime      @default(now())
-  updated_at      DateTime      @updatedAt
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
 
-  teacher         User          @relation(fields: [teacher_id], references: [id])
-  classroom       Classroom     @relation(fields: [classroom_id], references: [id])
+  teacher         User      @relation(fields: [teacher_id], references: [id])
+  classroom       Classroom @relation(fields: [classroom_id], references: [id])
 }
 
 model RoomBooking {
-  id                String       @id @default(uuid())
+  id                Int      @id @default(autoincrement())
   booking_date      DateTime
-  user_id           String
-  classroom_id      String
+  user_id           Int
+  classroom_id      Int
   curriculum        String
   reserved_date     DateTime
   reserved_start_time DateTime
   reserved_end_time DateTime
   reason            String
-  status            String       @default("Pending")
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
+  status            String   @default("Pending")
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 
-  user              User         @relation(fields: [user_id], references: [id])
-  classroom         Classroom    @relation(fields: [classroom_id], references: [id])
+  user              User      @relation(fields: [user_id], references: [id])
+  classroom         Classroom @relation(fields: [classroom_id], references: [id])
 }
 
 model RoomRental {
-  id                String       @id @default(uuid())
+  id                Int      @id @default(autoincrement())
   rental_date       DateTime
   rental_time       DateTime
-  user_id           String
-  classroom_id      String
+  user_id           Int
+  classroom_id      Int
   curriculum        String
   reason            String
   return_date       DateTime?
   return_time       DateTime?
-  return_user_id    String?
-  status            String       @default("InUse")
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
+  return_user_id    Int?
+  status            String   @default("InUse")
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
 
-  user              User         @relation(fields: [user_id], references: [id])
-  return_user       User?        @relation("ReturnUser", fields: [return_user_id], references: [id])
-  classroom         Classroom    @relation(fields: [classroom_id], references: [id])
+  user              User      @relation(fields: [user_id], references: [id])
+  return_user       User?     @relation("ReturnUser", fields: [return_user_id], references: [id])
+  classroom         Classroom @relation(fields: [classroom_id], references: [id])
 }
 
 model Conversation {
-  id            String        @id @default(uuid())
-  user_id       String
+  id            Int      @id @default(autoincrement())
+  user_id       Int
   topic         String
   last_message  String?
-  status        String        @default("Active")
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
+  status        String   @default("Active")
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
-  user          User          @relation(fields: [user_id], references: [id])
+  user          User      @relation(fields: [user_id], references: [id])
 }
+
 
 enum Role {
   Student

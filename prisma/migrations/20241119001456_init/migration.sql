@@ -18,7 +18,7 @@ CREATE TYPE "ConversationStatus" AS ENUM ('Active', 'Archived');
 
 -- CreateTable
 CREATE TABLE "User" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "student_id" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Classroom" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "classroom_name" TEXT NOT NULL,
     "floor" INTEGER NOT NULL,
     "classroom_image" TEXT,
@@ -51,11 +51,11 @@ CREATE TABLE "Classroom" (
 
 -- CreateTable
 CREATE TABLE "ClassSchedule" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "course_code" TEXT NOT NULL,
     "course_name" TEXT NOT NULL,
-    "teacher_id" TEXT NOT NULL,
-    "classroom_id" TEXT NOT NULL,
+    "teacher_id" INTEGER NOT NULL,
+    "classroom_id" INTEGER NOT NULL,
     "start_time" TIMESTAMP(3) NOT NULL,
     "end_time" TIMESTAMP(3) NOT NULL,
     "day_of_week" TEXT NOT NULL,
@@ -70,10 +70,10 @@ CREATE TABLE "ClassSchedule" (
 
 -- CreateTable
 CREATE TABLE "RoomBooking" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "booking_date" TIMESTAMP(3) NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "classroom_id" TEXT NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "classroom_id" INTEGER NOT NULL,
     "curriculum" TEXT NOT NULL,
     "reserved_date" TIMESTAMP(3) NOT NULL,
     "reserved_start_time" TIMESTAMP(3) NOT NULL,
@@ -88,16 +88,16 @@ CREATE TABLE "RoomBooking" (
 
 -- CreateTable
 CREATE TABLE "RoomRental" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "rental_date" TIMESTAMP(3) NOT NULL,
     "rental_time" TIMESTAMP(3) NOT NULL,
-    "user_id" TEXT NOT NULL,
-    "classroom_id" TEXT NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "classroom_id" INTEGER NOT NULL,
     "curriculum" TEXT NOT NULL,
     "reason" TEXT NOT NULL,
     "return_date" TIMESTAMP(3),
     "return_time" TIMESTAMP(3),
-    "return_user_id" TEXT,
+    "return_user_id" INTEGER,
     "status" TEXT NOT NULL DEFAULT 'InUse',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -107,8 +107,8 @@ CREATE TABLE "RoomRental" (
 
 -- CreateTable
 CREATE TABLE "Conversation" (
-    "id" TEXT NOT NULL,
-    "user_id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
     "topic" TEXT NOT NULL,
     "last_message" TEXT,
     "status" TEXT NOT NULL DEFAULT 'Active',
