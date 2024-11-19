@@ -1,10 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-async function updateUser(id: number, data: any) {
+interface User {
+  first_name: string;
+  last_name: string;
+  email: string;
+  role: string;
+}
+
+async function updateUser(id: number, data: User) {
   const response = await fetch(`/api/users/${id}`, {
     method: 'PUT',
     headers: {
@@ -22,16 +28,17 @@ async function updateUser(id: number, data: any) {
 
 export default function EditUserPage({ params }: { params: { id: string } }) {
   const id = Number(params.id);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<User>({
     first_name: '',
     last_name: '',
     email: '',
     role: 'Student',
   });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
 
-  // ดึงข้อมูลผู้ใช้ครั้งแรกเมื่อโหลดหน้า
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -39,7 +46,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
         if (!res.ok) {
           throw new Error('Failed to fetch user');
         }
-        const user = await res.json();
+        const user: User = await res.json();
         setFormData({
           first_name: user.first_name || '',
           last_name: user.last_name || '',
@@ -47,15 +54,16 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
           role: user.role || 'Student',
         });
       } catch (error) {
+        setError('Error fetching user data');
         console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
       }
     };
-  
+
     fetchUser();
   }, [id]);
-  
 
-  // ฟังก์ชันสำหรับอัปเดตค่าในฟอร์ม
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -64,17 +72,24 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
     }));
   };
 
-  // ฟังก์ชันเมื่อกดยืนยัน
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await updateUser(id, formData);
       alert('User updated successfully!');
-      router.push('/user'); // กลับไปหน้ารายการผู้ใช้
+      router.push('/user');
     } catch (error) {
       alert('Failed to update user.');
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
 
   return (
     <div className="container">
@@ -88,6 +103,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
             name="first_name"
             value={formData.first_name}
             onChange={handleChange}
+            aria-label="First Name"
           />
         </div>
 
@@ -99,6 +115,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
             name="last_name"
             value={formData.last_name}
             onChange={handleChange}
+            aria-label="Last Name"
           />
         </div>
 
@@ -110,12 +127,13 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            aria-label="Email"
           />
         </div>
 
         <div>
           <label htmlFor="role">Role:</label>
-          <select id="role" name="role" value={formData.role} onChange={handleChange}>
+          <select id="role" name="role" value={formData.role} onChange={handleChange} aria-label="Role">
             <option value="Student">Student</option>
             <option value="Teacher">Teacher</option>
             <option value="Admin">Admin</option>

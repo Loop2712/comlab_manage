@@ -4,7 +4,7 @@ import { prisma } from '../../../lib/prisma';
 // GET: Fetch all users
 export async function GET() {
   try {
-    const users = await prisma.User.findMany();
+    const users = await prisma.user.findMany();
     
     // ตรวจสอบว่ามีข้อมูลหรือไม่
     if (!users || users.length === 0) {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   const data = await req.json();
 
   try {
-    const user = await prisma.User.create({ data });
+    const user = await prisma.user.create({ data });
     return NextResponse.json(user);
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create user' }, { status: 500 });

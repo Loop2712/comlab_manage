@@ -4,7 +4,7 @@ import { prisma } from '../../../../lib/prisma';
 // GET: Fetch user by ID
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
-    const user = await prisma.User.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: Number(params.id) }, // แปลง id เป็น Int
     });
 
@@ -24,7 +24,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const data = await req.json();
 
   try {
-    const user = await prisma.User.update({
+    const user = await prisma.user.update({
       where: { id: Number(params.id) }, // แปลง id เป็น Int
       data,
     });
@@ -39,7 +39,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 // DELETE: Delete user by ID
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
-    await prisma.User.delete({
+    await prisma.user.delete({
       where: { id: Number(params.id) }, // แปลง id เป็น Int
     });
 
