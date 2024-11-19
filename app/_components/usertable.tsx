@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import EditUserModal from './EditUserModal';
+import CreateUserModal from './CreateUserModal';
 
 interface User {
   id: number;
@@ -15,7 +16,8 @@ interface User {
 export default function UserTable() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   // Load users from API
   const refreshUsers = () => {
@@ -30,7 +32,7 @@ export default function UserTable() {
 
   const handleEditClick = (user: User) => {
     setSelectedUser(user);
-    setShowModal(true);
+    setShowEditModal(true);
   };
 
   const handleDeleteClick = async (id: number) => {
@@ -41,13 +43,17 @@ export default function UserTable() {
     }
   };
 
-  const closeModal = () => {
-    setShowModal(false);
+  const closeModals = () => {
+    setShowEditModal(false);
+    setShowCreateModal(false);
     setSelectedUser(null);
   };
 
   return (
     <div>
+      <div style={{ marginBottom: '1rem' }}>
+        <button onClick={() => setShowCreateModal(true)}>Create User</button>
+      </div>
       <table>
         <thead>
           <tr>
@@ -76,9 +82,14 @@ export default function UserTable() {
         </tbody>
       </table>
 
-      {/* Modal */}
-      {showModal && selectedUser && (
-        <EditUserModal user={selectedUser} onClose={closeModal} onSave={refreshUsers} />
+      {/* Edit Modal */}
+      {showEditModal && selectedUser && (
+        <EditUserModal user={selectedUser} onClose={closeModals} onSave={refreshUsers} />
+      )}
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <CreateUserModal onClose={closeModals} onSave={refreshUsers} />
       )}
     </div>
   );
