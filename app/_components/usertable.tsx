@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import EditUserModal from './EditUserModal';
-import CreateUserModal from './CreateUserModal';
+import EditUserModal from './userModal/EditUserModal';
+import CreateUserModal from './userModal/CreateUserModal';
 
 interface User {
   id: number;
