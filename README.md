@@ -5,7 +5,7 @@ my-nextjs-app/
 │   │   │   └── route.ts
 │   │   ├── users/
 │   │   │   └── route.ts
-│   │   │       └──[id]/
+│   │   │       └── [id]/
 │   │   │           └── route.ts
 │   │   ├── classrooms/
 │   │   ├── classSchedules/
@@ -40,22 +40,20 @@ my-nextjs-app/
 │   ├── schema.prisma
 │   └── migrations/
 ├── components/
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   ├── Navbar.tsx
+│   ├── page
+│   │   └── admin
+│   │       └── theme -> Header.tsx, Footer.tsx, Navbar.tsx
 │   └── ... (อื่นๆ)
 ├── lib/
-│   ├── db.ts
+│   ├── prisma.ts
 │   └── auth.ts
 ├── middleware.ts
-├── types/
-│   └── index.d.ts
 ├── public/
 │   ├── images/
 │   └── icons/
 ├── styles/
-│   ├── components/
-│   └── pages/
+│   ├── css
+│   └── js
 ├── .env.local
 ├── next.config.js
 ├── tsconfig.json
